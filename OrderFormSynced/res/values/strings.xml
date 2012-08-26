@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, FragmentVogellaActivity!</string>
+    <string name="app_name">Leger</string>
+    <color name="BLUE">#330000</color>
+    <color name="myblack">#000000</color>
+
+</resources>
