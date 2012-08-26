@@ -74,7 +74,6 @@ public class ListFragment extends android.app.ListFragment {
 		if (fragment != null && fragment.isInLayout()) {
 
 			//l.setBackgroundColor(getResources().getColor(R.color.BLUE));
-			
 			// passes selectedStore to detail fragment  
 			fragment.setText(selectedStore);
 
