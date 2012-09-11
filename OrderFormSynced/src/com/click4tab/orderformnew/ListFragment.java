@@ -1,11 +1,11 @@
 package com.click4tab.orderformnew;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -19,11 +19,13 @@ import android.widget.Toast;
 
 public class ListFragment extends android.app.ListFragment {
 
+	static View V;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
+		V = new View(getActivity());
 	}
 
 	@Override
@@ -54,7 +56,23 @@ public class ListFragment extends android.app.ListFragment {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, StoreList);
 		setListAdapter(adapter);
+		DetailFragment.isOrderPlaced = 1;
+
 		mDbHelper.close();
+
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// getListAdapter().getItem(arg2).toString();
+				Toast.makeText(getActivity(),
+						"yo long " + getListAdapter().getItem(arg2).toString(),
+						Toast.LENGTH_SHORT).show();
+
+				return true;
+			}
+		});
 	}
 
 	/*
@@ -62,7 +80,7 @@ public class ListFragment extends android.app.ListFragment {
 	 * 
 	 * Handles the event when an item is clicked on left pane, performs action
 	 * based on the selection in left pane
-	 *  
+	 * 
 	 * @see android.app.ListFragment#onListItemClick(android.widget.ListView,
 	 * android.view.View, int, long)
 	 */
@@ -72,11 +90,14 @@ public class ListFragment extends android.app.ListFragment {
 		DetailFragment fragment = (DetailFragment) getFragmentManager()
 				.findFragmentById(R.id.detailFragment);
 		if (fragment != null && fragment.isInLayout()) {
+			// v.setBackgroundColor(getResources().getColor(R.color.BLUE));
+			// passes selectedStore to detail fragment
+			// v.setBackgroundColor(getResources().getColor(R.color.BLUE));
 
-			//l.setBackgroundColor(getResources().getColor(R.color.BLUE));
-			// passes selectedStore to detail fragment  
+			V.setBackgroundResource(0);
+			v.setBackgroundResource(R.color.BLUE);
+			V = v;
 			fragment.setText(selectedStore);
-
 			// getItemList(selectedStore);
 
 		} else {

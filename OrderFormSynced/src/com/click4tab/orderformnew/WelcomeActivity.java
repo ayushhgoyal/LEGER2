@@ -11,20 +11,23 @@ public class WelcomeActivity extends Activity {
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.welcome);
+//		setContentView(R.layout.welcome);
 		
-		mHandler.postDelayed(new Runnable() {
-            public void run() {
-                doStuff();
-            }
-        }, 3000);
+		doStuff();
     }
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
 
 	protected void doStuff() {
 		// TODO Auto-generated method stub
 		if (Login.userRegistered == 1){
 			//
-			Intent int1 = new Intent("mainActivity");
+			Intent int1 = new Intent("dashActivity");
 			startActivity(int1);
 		
 	}

@@ -47,6 +47,7 @@ public class TestAdapter {
 	private final Context mContext;
 	private SQLiteDatabase mDb;
 	private DatabaseHandler mDbHelper;
+	public static String NETORDER_SQL;
 
 	HttpClient client;
 	static JSONObject json, jsonQuery, json_user;
@@ -57,7 +58,7 @@ public class TestAdapter {
 	static StringBuffer toBeWrittenOnLocalDb;
 	final static String URL = "http://seekonline.in/develop/Appsyn/order.php";
 
-	// final static String URL = "http://192.168.1.9/Appsyn/order.php";
+	// final static String URL = "http://192.168.1.8/Appsyn/order.php";
 	public TestAdapter(Context context) {
 		this.mContext = context;
 		mDbHelper = new DatabaseHandler(mContext);
@@ -98,7 +99,7 @@ public class TestAdapter {
 	 * @return a cursor ("mCur" here) which contains the list of stores
 	 */
 	public Cursor getStoreList() {
-		String sql = "SELECT Name from Stores";
+		String sql = "SELECT DISTINCT Name from Stores";
 		Cursor mCur = mDb.rawQuery(sql, null);
 
 		return mCur;
@@ -134,19 +135,19 @@ public class TestAdapter {
 	 * @return netOrderID which is generated lately in integer format.
 	 */
 	public int generateNetOrderId(String selectedStore, int SalesManID) {
-		String sql = "INSERT INTO NetOrderID ( StoreID, SalesManID) Select ID, "
+		NETORDER_SQL = "INSERT INTO NetOrderID ( StoreID, SalesManID) Select ID, "
 				+ SalesManID
 				+ " from Stores WHERE Name='"
 				+ selectedStore
 				+ "'";
-
-		// ExecSQL is used to make a such queries on
-		// database which are not supposed to return anything.
-
-		// ----------------
-		mDb.execSQL(sql);
-		Log.e("my", "local db updated"); // means netOrderID is generated and
-											// stored in database.
+		//
+		// // ExecSQL is used to make a such queries on
+		// // database which are not supposed to return anything.
+		//
+		// // ----------------
+		// mDb.execSQL(sql);
+		// Log.e("my", "local db updated"); // means netOrderID is generated and
+		// stored in database.
 		// Now we need to retrieve the latest auto-generated netOrderID so that
 		// it can be passed on to
 		// methods which places order.
@@ -190,6 +191,8 @@ public class TestAdapter {
 				+ price + ")";
 
 		mDb.execSQL(sql);
+
+		mDb.execSQL(NETORDER_SQL);
 
 	}
 
@@ -262,7 +265,7 @@ public class TestAdapter {
 
 				if ((mCur.isLast())) {
 					strbuf.append(net + "#");
-				} else {		// i.e. mCur is not at last
+				} else { // i.e. mCur is not at last
 					strbuf.append(net);
 				}
 				Log.e("net", "net appended" + net);
@@ -284,21 +287,19 @@ public class TestAdapter {
 
 		Log.e("my", "sql executed");
 		if (mCur2 != null) {
-			//strbuf.append("#");
+			// strbuf.append("#");
 			for (mCur2.moveToFirst(); !mCur2.isAfterLast(); mCur2.moveToNext()) {
 
-				 String sql3 =
-				 "INSERT into OrderDetails (NetOrderId, ItemID, Quantity, Price, OrderID) VALUES ("
-				 + mCur2.getString(0)
-				 + ", "
-				 + mCur2.getString(1)
-				 + ", "
-				 + mCur2.getString(2)
-				 + ", "
-				 + mCur2.getString(3)
-				 + ", "
-				 + mCur2.getString(4) + ");";
-				
+				String sql3 = "INSERT into OrderDetails (NetOrderId, ItemID, Quantity, Price, OrderID) VALUES ("
+						+ mCur2.getString(0)
+						+ ", "
+						+ mCur2.getString(1)
+						+ ", "
+						+ mCur2.getString(2)
+						+ ", "
+						+ mCur2.getString(3)
+						+ ", "
+						+ mCur2.getString(4) + ");";
 
 				if ((mCur2.isLast())) {
 					strbuf.append(sql3);
@@ -336,7 +337,10 @@ public class TestAdapter {
 	 */
 	public void getDataFromServer() {
 		params = new ArrayList<NameValuePair>();
+
 		params.add(new BasicNameValuePair("tag", "read_data"));
+		Log.e("TA", "about to call read()");
+
 		new Read().execute("");
 
 	}
@@ -370,6 +374,9 @@ public class TestAdapter {
 
 		}
 		Toast.makeText(mContext, "Reading complete", Toast.LENGTH_SHORT).show();
+		// After the reading has completed, calling write operation
+		Log.e("Write", " writing started");
+		performWriteOperation();
 
 		AlertDialog.Builder clickAlert = new AlertDialog.Builder(mContext);
 		clickAlert
@@ -385,8 +392,46 @@ public class TestAdapter {
 
 			}
 		});
-		clickAlert.create().show();
+		// clickAlert.create().show();
 
+	}
+
+	public void performWriteOperation() {
+		DashActivity dashObj = new DashActivity();
+		if (dashObj.isOnline()) {
+			// Toast.makeText(getApplicationContext(), "writing in progress",
+			// Toast.LENGTH_SHORT).show();
+			// write data on server
+			// TestAdapter mDbHelper = new TestAdapter(this);
+			readOrWrite = 1;
+			Log.e("TA", "readwrite set = " + readOrWrite);
+			createDatabase();
+			open();
+			try {
+
+				// if alreadySynced()
+				if (!alreadySynced())
+
+				{
+					Log.e("sync", "not synced");
+
+					writeUnwrittenData();
+				} else {
+					Log.e("sync", "already synced");
+					// Toast.makeText(this, "Already synced!",
+					// Toast.LENGTH_SHORT).show();
+				}
+			} catch (Exception e) {
+				// e.printStackTrace();
+				Log.e("err", e.toString());
+			} finally {
+				mDbHelper.close();
+			}
+
+		} else {
+			// Toast.makeText(getApplicationContext(), "No internet access",
+			// Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	/**
@@ -441,7 +486,8 @@ public class TestAdapter {
 
 			String sqlToSetFlagOrderDetails = "Update OrderDetails SET flag = '1' where flag='0'";
 			mDb.execSQL(sqlToSetFlagOrderDetails);
-			Toast.makeText(mContext, "Writing complete", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "Writing complete", Toast.LENGTH_SHORT)
+					.show();
 
 			Log.e("my", "flag column updated");
 
@@ -560,7 +606,7 @@ public class TestAdapter {
 				// Toast.LENGTH_SHORT).show();
 
 				Log.e("my", "inside json called and returned");
-
+				Log.e("TA", "readwrite = " + readOrWrite);
 				if (readOrWrite == 1) {
 
 					return json.getString("success");
@@ -572,9 +618,10 @@ public class TestAdapter {
 				}
 
 				else {
+					Log.e("TA", "creating string tokenizer");
 					toBeWrittenOnLocalDb = new StringBuffer();
 
-					for (int i = 1; i <= 8; i++) {
+					for (int i = 1; i <= 9; i++) {
 
 						jsonQuery = json.getJSONObject("data" + i);
 
@@ -630,7 +677,7 @@ public class TestAdapter {
 						flagValue = 1;
 						Log.e("my", "flag value set");
 						mDbHelper.setflag();
-						
+
 					}
 
 				} else if (result == null) {
@@ -649,7 +696,8 @@ public class TestAdapter {
 
 						Log.e("my", "login success");
 						Login.userRegistered = 1;
-						Intent intent = new Intent("mainActivity");
+
+						Intent intent = new Intent("dashActivity");
 						mContext.startActivity(intent);
 
 					}
@@ -672,10 +720,50 @@ public class TestAdapter {
 
 			// changed following else to elseif else if( readOrWrite == 0)
 			else if (readOrWrite == 0) {
+				Log.e("TA", "read  = 0 , calling getData");
+
 				mDbHelper.getData(result);
 			}
 			mDbHelper.close();
 
+		}
+
+	}
+
+	public boolean alreadySynced() {
+		// TODO Auto-generated method stub
+		String sql1 = "SELECT * FROM OrderDetails WHERE flag=0";
+		Cursor cur1 = mDb.rawQuery(sql1, null);
+		String sql2 = "SELECT * FROM NetOrderID WHERE flag=0";
+		Cursor cur2 = mDb.rawQuery(sql2, null);
+		if (cur1.getCount() == 0 && cur2.getCount() == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public String getUnitForItem(int itemSelectedID) {
+		// TODO Auto-generated method stub
+
+		String sql = " SELECT Unit_Name from ItemData as i INNER JOIN unit as u on i.Unit_id = u.Unit_Id WHERE ItemID = "
+				+ itemSelectedID;
+		Cursor cur = mDb.rawQuery(sql, null);
+
+		cur.moveToFirst();
+		return cur.getString(0);
+	}
+
+	public String getNameOfSalesman(int salesManPermanent) {
+		// TODO Auto-generated method stub
+		String sql = "SELECT Name FROM Salesman WHERE ID = "
+				+ salesManPermanent;
+		Cursor cur = mDb.rawQuery(sql, null);
+		if (cur.getCount() == 0) {
+			return "";
+		} else {
+			cur.moveToFirst();
+			return cur.getString(0);
 		}
 
 	}
