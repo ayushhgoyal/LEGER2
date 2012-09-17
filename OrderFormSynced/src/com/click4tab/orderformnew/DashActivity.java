@@ -32,7 +32,7 @@ public class DashActivity extends Activity implements OnClickListener {
 
 		String nameOfSalesman = mDbHelper
 				.getNameOfSalesman(Login.salesManPermanent);
-		welcomeText.setText("Welcome Mr. " + nameOfSalesman + "!");
+		welcomeText.setText("Welcome Mr. " + nameOfSalesman );
 
 		mDbHelper.close();
 	}
