@@ -18,6 +18,7 @@ public class DashActivity extends Activity implements OnClickListener {
 	Button continueButton, syncButton, logoutButton;
 	TextView welcomeText;
 	Context dashContext;
+//just adding a new random comment 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,7 +32,7 @@ public class DashActivity extends Activity implements OnClickListener {
 
 		String nameOfSalesman = mDbHelper
 				.getNameOfSalesman(Login.salesManPermanent);
-		welcomeText.setText("Welcome " + nameOfSalesman + "!");
+		welcomeText.setText("Welcome Mr. " + nameOfSalesman + "!");
 
 		mDbHelper.close();
 	}
@@ -44,6 +45,8 @@ public class DashActivity extends Activity implements OnClickListener {
 		syncButton = (Button) findViewById(R.id.button1);
 		syncButton.setOnClickListener(this);
 		dashContext = this;
+		logoutButton = (Button) findViewById(R.id.button2);
+		logoutButton.setOnClickListener(this);
 	}
 
 	@Override
@@ -58,8 +61,12 @@ public class DashActivity extends Activity implements OnClickListener {
 		if (v == syncButton) {
 			// read/write online data
 			performReadOperation();
-			//performWriteOperation();
+			// performWriteOperation();
 
+		}
+
+		if (v == logoutButton) {
+			logoutUser();
 		}
 	}
 
@@ -86,57 +93,63 @@ public class DashActivity extends Activity implements OnClickListener {
 
 	}
 
-//	public void performWriteOperation() {
-//
-//		if (isOnline()) {
-////			Toast.makeText(getApplicationContext(), "writing in progress",
-////					Toast.LENGTH_SHORT).show();
-//			// write data on server
-//			TestAdapter mDbHelper = new TestAdapter(dashContext);
-//			mDbHelper.readOrWrite = 1;
-//			mDbHelper.createDatabase();
-//			mDbHelper.open();
-//			try {
-//
-//				// if alreadySynced()
-//				if (!mDbHelper.alreadySynced())
-//
-//				{
-//					mDbHelper.writeUnwrittenData();
-//				} else {
-//					Toast.makeText(getApplicationContext(), "Already synced!",
-//							Toast.LENGTH_SHORT).show();
-//				}
-//			} catch (Exception e) {
-//				// e.printStackTrace();
-//				Log.e("err", e.toString());
-//			} finally {
-//				mDbHelper.close();
-//			}
-//
-//		} else {
-//			Toast.makeText(getApplicationContext(), "No internet access",
-//					Toast.LENGTH_SHORT).show();
-//		}
-//	}
+	// public void performWriteOperation() {
+	//
+	// if (isOnline()) {
+	// // Toast.makeText(getApplicationContext(), "writing in progress",
+	// // Toast.LENGTH_SHORT).show();
+	// // write data on server
+	// TestAdapter mDbHelper = new TestAdapter(dashContext);
+	// mDbHelper.readOrWrite = 1;
+	// mDbHelper.createDatabase();
+	// mDbHelper.open();
+	// try {
+	//
+	// // if alreadySynced()
+	// if (!mDbHelper.alreadySynced())
+	//
+	// {
+	// mDbHelper.writeUnwrittenData();
+	// } else {
+	// Toast.makeText(getApplicationContext(), "Already synced!",
+	// Toast.LENGTH_SHORT).show();
+	// }
+	// } catch (Exception e) {
+	// // e.printStackTrace();
+	// Log.e("err", e.toString());
+	// } finally {
+	// mDbHelper.close();
+	// }
+	//
+	// } else {
+	// Toast.makeText(getApplicationContext(), "No internet access",
+	// Toast.LENGTH_SHORT).show();
+	// }
+	// }
 
 	public void logoutUser() {
 		// TODO Auto-generated method stub
 		Login.userRegistered = 0;
+
 		finish();
+
+		Intent intent = new Intent(dashContext, WelcomeActivity.class);
+		startActivity(intent);
+
 	}
 
 	public Boolean isOnline() {
 
-//		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//		NetworkInfo ni = cm.getActiveNetworkInfo();
-//		if (ni != null && ni.isConnected()) {
-//			return true;
-//		} else {
-//			Log.e("net", "No net access");
-//			return false;
-//		}
-		return true;	
+		// ConnectivityManager cm = (ConnectivityManager)
+		// getSystemService(Context.CONNECTIVITY_SERVICE);
+		// NetworkInfo ni = cm.getActiveNetworkInfo();
+		// if (ni != null && ni.isConnected()) {
+		// return true;
+		// } else {
+		// Log.e("net", "No net access");
+		// return false;
+		// }
+		return true;
 	}
 
 }

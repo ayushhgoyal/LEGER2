@@ -37,54 +37,54 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 
 		// INSTRUCTIONS DIALOG
-		AlertDialog.Builder instructionsAlert = new AlertDialog.Builder(this);
-		instructionsAlert.setTitle("Instructions");
-		instructionsAlert
-				.setMessage("Select store from Left pane to start placing orders.  "
-						+ "Click on items in right pane to enter quantity and price.  "
-						+ "Click anywhere to cancel this dialog.");
-		instructionsAlert.setCancelable(true);
-		instructionsAlert.create().show();
-
-		// get salesman's name
-		// "user" in following message will be replaced by salesman's name
-		AlertDialog.Builder welcomeAlert = new AlertDialog.Builder(this);
-		String s = "";
-		// TestAdapter t = new TestAdapter(this);
-		// t.createDatabase();// create and open here
-		// if ()
-
-		welcomeAlert
-				.setMessage("Greetings user! Select from below or click anywhere to cancel this dialog. ");
-		welcomeAlert.setNegativeButton("Logout", new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				dash.logoutUser();
-			}
-		});
-
-		welcomeAlert.setPositiveButton("Download", new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dash.performReadOperation();
-			}
-		});
-
-		welcomeAlert.setNeutralButton("Upload", new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-//				dash.performWriteOperation();
-			}
-		});
-
-		welcomeAlert.setCancelable(true);
-		welcomeAlert.create().show();
-
+//		AlertDialog.Builder instructionsAlert = new AlertDialog.Builder(this);
+//		instructionsAlert.setTitle("Instructions");
+//		instructionsAlert
+//				.setMessage("Select store from Left pane to start placing orders.  "
+//						+ "Click on items in right pane to enter quantity and price.  "
+//						+ "Click anywhere to cancel this dialog.");
+//		instructionsAlert.setCancelable(true);
+//		instructionsAlert.create().show();
+//
+//		// get salesman's name
+//		// "user" in following message will be replaced by salesman's name
+//		AlertDialog.Builder welcomeAlert = new AlertDialog.Builder(this);
+//		String s = "";
+//		// TestAdapter t = new TestAdapter(this);
+//		// t.createDatabase();// create and open here
+//		// if ()
+//
+//		welcomeAlert
+//				.setMessage("Greetings user! Select from below or click anywhere to cancel this dialog. ");
+//		welcomeAlert.setNegativeButton("Logout", new OnClickListener() {
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+//				dash.logoutUser();
+//			}
+//		});
+//
+//		welcomeAlert.setPositiveButton("Download", new OnClickListener() {
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				dash.performReadOperation();
+//			}
+//		});
+//
+//		welcomeAlert.setNeutralButton("Upload", new OnClickListener() {
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+////				dash.performWriteOperation();
+//			}
+//		});
+//
+//		welcomeAlert.setCancelable(true);
+//		welcomeAlert.create().show();
+//
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {

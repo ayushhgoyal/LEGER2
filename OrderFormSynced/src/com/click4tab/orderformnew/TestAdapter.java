@@ -179,8 +179,10 @@ public class TestAdapter {
 			float price) {
 		DetailFragment.isOrderPlaced = 1;
 
+		// String netOrderIdString = new Integer(Login.salesManPermanent)
+		// .toString() + new Integer(netOrderId).toString();
 		// mDb.execSQL(NET_SQL);
-
+		// Log.e("new NETid", "netId " + Integer.parseInt(netOrderIdString));
 		String sql = "Insert INTO OrderDetails (NetOrderId, ItemID, Quantity, Price) Values ( "
 				+ netOrderId
 				+ ","
@@ -191,7 +193,8 @@ public class TestAdapter {
 				+ price + ")";
 
 		mDb.execSQL(sql);
-
+		//save netorderID in a variable 
+		
 		mDb.execSQL(NETORDER_SQL);
 
 	}
@@ -260,8 +263,8 @@ public class TestAdapter {
 				// + mCur.getString(2) + ", " + mCur.getString(3) + ");";
 
 				String net = mCur.getString(0) + ":::" + mCur.getString(1)
-						+ ":::" + mCur.getString(2) + ":::" + mCur.getString(3)
-						+ "#";
+						+ ":::" + mCur.getString(2) + ":::"
+						+ Login.salesManPermanent + mCur.getString(3) + "#";
 
 				if ((mCur.isLast())) {
 					strbuf.append(net + "#");
@@ -291,15 +294,14 @@ public class TestAdapter {
 			for (mCur2.moveToFirst(); !mCur2.isAfterLast(); mCur2.moveToNext()) {
 
 				String sql3 = "INSERT into OrderDetails (NetOrderId, ItemID, Quantity, Price, OrderID) VALUES ("
+						+ Login.salesManPermanent
 						+ mCur2.getString(0)
 						+ ", "
 						+ mCur2.getString(1)
 						+ ", "
 						+ mCur2.getString(2)
 						+ ", "
-						+ mCur2.getString(3)
-						+ ", "
-						+ mCur2.getString(4) + ");";
+						+ mCur2.getString(3) + ", " + mCur2.getString(4) + ");";
 
 				if ((mCur2.isLast())) {
 					strbuf.append(sql3);
@@ -461,6 +463,9 @@ public class TestAdapter {
 
 		mDb.execSQL("DELETE FROM TerritoryData");
 		Log.e("get", "cat deleted");
+
+		mDb.execSQL("DELETE FROM unit");
+		Log.e("get", "unit deleted");
 
 	}
 
